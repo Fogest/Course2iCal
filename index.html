@@ -4,17 +4,18 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/minishare.css">
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Course 2 Calendar</title>
 </head>
 <body>
 <div class="container">
     <h1>Course 2 Calendar for UofG</h1>
-    <div>Simply copy your whole web advisor course display page and then paste it into the box below. To do this go to
+    <p>Simply copy your whole web advisor course display page and then paste it into the box below. To do this go to
     your WebAdvisor schedule page (not the Class Schedule Grid) and hit CTRL+A and then CTRL+C. This will copy your whole
-    page and copy it. Now paste it into the box below.</div>
-    <br>
-    <div>Still stuck? Click the button below to open a small video.</div>
+    page and copy it. Now paste it into the box below.</p>
+    <p>Still stuck? Click the button below to open a small video.</p>
     <button class="btn btn-info btn-sm" id="showVideo">Show Video</button>
     <div style="display:none" class="hiddenVideo">
         <video id="howtoVideo" width="1056" height="596" controls>
@@ -29,9 +30,14 @@
 
     <div style="display:none" class="resultContent">
         <h2>Download and Export Options</h2>
-        <button class="btn btn-default downloadIcal" id="downloadIcal">Download .ics File</button>
+        <button class="btn btn-success downloadIcal" id="downloadIcal">Download .ics File</button>
         <br>
-        <div>The .ics file can be imported to any calendar application you may use.</div>
+        <p>The .ics file can be imported to any calendar application you may use.</p>
+        <p>Here are some links demonstrating how to import .ics files into varios popular calendar applications: <br>
+            <a target="_blank" href="https://support.google.com/calendar/answer/37118?hl=en">Google Calendar</a><br>
+            <a target="_blank" href="http://help.unc.edu/help/how-to-import-an-icalendar-ics-file-to-outlook/">Outlook</a><br>
+            <a target="_blank" href="http://smallbusiness.chron.com/import-ics-ical-52066.html">iCal (Mac)</a>
+        </p>
     </div>
     <footer>
         <hr>
@@ -39,9 +45,11 @@
         Made by <a href="https://jhvisser.com">Justin Visser</a>
     </footer>
 </div>
+
 </body>
 <script src="js/jquery-1.11.3.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
+<script src="js/minishare-0.0.1.js"></script>
 <script  type="text/javascript">
 
     /**
@@ -337,6 +345,11 @@
 
         //Reveal content:
         $(".resultContent").slideDown(300);
+        $.miniShare( {
+            message: "Care to Share?",
+            twitter_message: "Check out \"Course 2 Calendar\" it allows you to easily export your course schedule.",
+            url: "https://jhvisser.com/course/"
+        });
     });
 
     $("#downloadIcal").click(function(e) {
