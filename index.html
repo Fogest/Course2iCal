@@ -9,7 +9,7 @@
 </head>
 <body>
 <div class="container">
-    <h1>Course 2 Calendar</h1>
+    <h1>Course 2 Calendar for UofG</h1>
     <div>Simply copy your whole web advisor course display page and then paste it into the box below. To do this go to
     your WebAdvisor schedule page (not the Class Schedule Grid) and hit CTRL+A and then CTRL+C. This will copy your whole
     page and copy it. Now paste it into the box below.</div>
@@ -27,14 +27,17 @@
     <textarea name="coursePasteContent" id="coursePasteContent" cols="50" rows="10"></textarea></br>
     <button id="getIcal" class="btn btn-primary getIcalButton">Generate Calendar</button>
 
-    <div style="display:none" class="resultHr"><hr></div>
     <div style="display:none" class="resultContent">
         <h2>Download and Export Options</h2>
         <button class="btn btn-default downloadIcal" id="downloadIcal">Download .ics File</button>
         <br>
         <div>The .ics file can be imported to any calendar application you may use.</div>
     </div>
-
+    <footer>
+        <hr>
+        Having problems? <a href="mailto:course@jhvisser.com">Send me an email</a><br>
+        Made by <a href="https://jhvisser.com">Justin Visser</a>
+    </footer>
 </div>
 </body>
 <script src="js/jquery-1.11.3.min.js"></script>
@@ -329,13 +332,11 @@
     //Called when getIcal button is pressed.
     $("#getIcal").click(function(e) {
         e.preventDefault();
-        $(".resultHr").hide();
-        $(".resultContent").hide();
+        $(".resultContent").slideUp(300);
         parsePasteContent($("#coursePasteContent").val());
 
         //Reveal content:
-        $(".resultHr").fadeIn(200);
-        $(".resultContent").delay(200).slideDown(250);
+        $(".resultContent").slideDown(300);
     });
 
     $("#downloadIcal").click(function(e) {
