@@ -3,14 +3,38 @@
 <head>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="css/style.css">
     <meta charset="UTF-8">
-    <title>Course 2 iCal</title>
+    <title>Course 2 Calendar</title>
 </head>
 <body>
 <div class="container">
-    <h1>Course 2 iCal</h1>
-    <textarea name="coursePasteContent" id="coursePasteContent" cols="150" rows="25"></textarea>
-    <button id="getIcal" class="getIcalButton">Get iCal</button>
+    <h1>Course 2 Calendar</h1>
+    <div>Simply copy your whole web advisor course display page and then paste it into the box below. To do this go to
+    your WebAdvisor schedule page (not the Class Schedule Grid) and hit CTRL+A and then CTRL+C. This will copy your whole
+    page and copy it. Now paste it into the box below.</div>
+    <br>
+    <div>Still stuck? Click the button below to open a small video.</div>
+    <button class="btn btn-info btn-sm" id="showVideo">Show Video</button>
+    <div style="display:none" class="hiddenVideo">
+        <video id="howtoVideo" width="1056" height="596" controls>
+            <source src="video/howto.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    <br>
+    <hr>
+    <textarea name="coursePasteContent" id="coursePasteContent" cols="50" rows="10"></textarea></br>
+    <button id="getIcal" class="btn btn-primary getIcalButton">Generate Calendar</button>
+
+    <div style="display:none" class="resultHr"><hr></div>
+    <div style="display:none" class="resultContent">
+        <h2>Download and Export Options</h2>
+        <button class="btn btn-default downloadIcal" id="downloadIcal">Download .ics File</button>
+        <br>
+        <div>The .ics file can be imported to any calendar application you may use.</div>
+    </div>
+
 </div>
 </body>
 <script src="js/jquery-1.11.3.min.js"></script>
@@ -273,7 +297,11 @@
             }
         }
         ical += 'END:VCALENDAR';
-        console.log(ical);
+        var download = new Blob([ical], {
+            type: 'text/calendar'
+        });
+        var url = URL.createObjectURL(download);
+        $("#downloadIcal").data('url', url);
     }
 
     /**
@@ -282,10 +310,37 @@
      * ------------------------------------------------
      */
 
+    $("#showVideo").click(function(e) {
+        e.preventDefault();
+        var buttonText = $(this).text();
+        var video = document.getElementById("howtoVideo");
+        if(buttonText == "Show Video") {
+            $(this).text("Hide Video");
+            $(".hiddenVideo").slideToggle();
+            video.play();
+        } else {
+            $(this).text("Show Video");
+            $(".hiddenVideo").slideToggle();
+            video.currentTime = 0;
+            video.pause();
+        }
+    });
+
     //Called when getIcal button is pressed.
     $("#getIcal").click(function(e) {
         e.preventDefault();
+        $(".resultHr").hide();
+        $(".resultContent").hide();
         parsePasteContent($("#coursePasteContent").val());
+
+        //Reveal content:
+        $(".resultHr").fadeIn(200);
+        $(".resultContent").delay(200).slideDown(250);
+    });
+
+    $("#downloadIcal").click(function(e) {
+        e.preventDefault();
+        window.location.replace($(this).data('url'));
     });
 
 </script>
