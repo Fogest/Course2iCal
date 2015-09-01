@@ -1,10 +1,292 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
     <meta charset="UTF-8">
-    <title></title>
+    <title>Course 2 iCal</title>
 </head>
 <body>
-
+<div class="container">
+    <h1>Course 2 iCal</h1>
+    <textarea name="coursePasteContent" id="coursePasteContent" cols="150" rows="25"></textarea>
+    <button id="getIcal" class="getIcalButton">Get iCal</button>
+</div>
 </body>
+<script src="js/jquery-1.11.3.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script  type="text/javascript">
+
+    /**
+     * ------------------------------------------------
+     * Functions
+     * ------------------------------------------------
+     */
+
+    /**
+     * Gets the matches given a regex string.
+     * string - Content you're searching
+     * regex - Regex search string
+     * index - Which capture group to use
+     */
+    function getMatches(string, regex, index) {
+        index || (index = 1); // default to the first capturing group
+        var matches = [];
+        var match;
+        while (match = regex.exec(string)) {
+            matches.push(match[index]);
+        }
+        return matches;
+    }
+
+    function getTermData() {
+        return $.parseJSON('{"W15": {"termEnd": "20150403T000000"},"F14":{"termEnd": "20141129T000000"},"S15":{"termEnd": "20150801T000000"},"F15":{"termEnd": "20151205T000000"}}');
+    }
+
+    function getTerm(content) {
+        var term = /^.+\s2015$/gm.exec(content);
+        term = term[0];
+        term = term.split(" ");
+        term = term[0].charAt(0).toUpperCase() + term[1].charAt(2) + term[1].charAt(3);
+        var termData = getTermData();
+        return termData[term];
+    }
+
+    function getAbrv() {
+        return $.parseJSON('{"AC":"Athletic Centre","ANCC":"OVC Animal Cancer Centre","ANNU":"Animal Science","BWH":"Blackwood Hall","CAF":"Central Animal Facility","CRB":"OVC Clinical Research","CRSC":"Crop Science","DH":"Day Hall","EBA":"Environmental Biology Annex 1","ECBA":"Edmund C. Bovey Building","FS":"Food Science","GRHM":"Graham Hall","HUTT":"H.L. Hutt Building","JHNH":"Johnston Hall","JTP":"John T. Powell Building","LA":"Landscape Architecture","LABL":"lab Animal Building","MAC":"Macdonald Hall","MACN":"MacNaughton","MACS":"Macdonald Stewart Hall","MASS":"Massey Hall","MCKN":"MacKinnon","MCLN":"J.D. Maclachlan","MINS":"Macdonald Institute","MLIB":"Mclaughlin Library","MSAC":"Macdonald Stewart Art Centre","OVCM":"Ontario Veterinary College","REYN":"Reynolds Building","RICH":"Richards Building","ROZH":"Rozanski Hall","SSC":"Science Complex","THRN":"A.A. Thornbrough Building","VSER":"Vehicle Services","WMEM":"War Memorial Hall","ZAV":"Zavitz Hall","ZOOB":"Zoology Annex 2"}');
+    }
+
+    function getFullBuildingName(shortForm) {
+        var abrv = getAbrv();
+        abrv = abrv[shortForm];
+        if(typeof abrv === 'undefined')
+            return shortForm;
+        return abrv;
+    }
+
+    function getDateVal(input) {
+        var otherVal = 0;
+        switch (input) {
+            case 'Mon':
+                otherVal = 1;
+                break;
+            case 'Tues':
+                otherVal = 2;
+                break;
+            case 'Wed':
+                otherVal = 3;
+                break;
+            case 'Thur':
+                otherVal = 4;
+                break;
+            case 'Fri':
+                otherVal = 5;
+                break;
+            case 'Sat':
+                otherVal = 6;
+                break;
+            case 'Sun':
+                otherVal = 0;
+                break;
+            default:
+                otherVal = 0;
+        }
+        return otherVal;
+    }
+
+    function convertArrayOfDatesToICSFormat(date) {
+        var results = [];
+        for (var i = 0; i < date.length; ++i) {
+            switch (date[i]) {
+                case 'Mon':
+                    results.push('MO');
+                    break;
+                case 'Tues':
+                    results.push('TU');
+                    break;
+                case 'Wed':
+                    results.push('WE');
+                    break;
+                case 'Thur':
+                    results.push('TH');
+                    break;
+                case 'Fri':
+                    results.push('FR');
+                    break;
+                case 'Sat':
+                    results.push('SA');
+                    break;
+                case 'Sun':
+                    results.push('SU');
+                    break;
+                default:
+                    results.push('Days of the week incorrect');
+            }
+        }
+        return results.join();
+    }
+
+    function getArrayOfDates(date) {
+        return date.replace(/\s/g, "").split(",");
+    }
+
+    function getCourseLocation(string) {
+        var location = string.split(",")[0];
+        var room = string.split(",")[1];
+        if(typeof room === 'undefined')
+            return getFullBuildingName(location) + " (" + location + ")";
+        return getFullBuildingName(location) + " (" + location + ")" + "," + room;
+    }
+
+    //Course functions
+    function getCourseTime(string, startOrEnd, type) {
+        if(type == "EXAM") {
+            string = string.substring(0, string.lastIndexOf(" "));
+        }
+        var re = /^((?:0[1-9]|1[012]):[0-5][0-9][AP]M) - ((?:0[1-9]|1[012]):[0-5][0-9][AP]M)$/;
+        var match = re.exec(string);
+        if (startOrEnd == 'start') {
+            return match[1];
+        } else if (startOrEnd == 'end') {
+            return match[2];
+        }
+    }
+
+    function getStartDate(course) {
+        //WebAdvisor says 15 instead of 2015 so add the '20' (really WA???).
+        return '20' + course[course.length-1];
+    }
+
+    function correctStartTime(courseStart, courseTime, courseDays) {
+        var re = /\B(AM|PM)/gm;
+        var subst = ' $1';
+
+        var fullDate = courseStart + ' ' + courseTime;
+        var originalDate = new Date(fullDate.replace(re, subst));
+        var date = new Date(courseStart);
+        var sameDay = false;
+        var dates = getArrayOfDates(courseDays);
+        for (var i = 0; i < dates.length; ++i) {
+            if (getDateVal(dates[i]) == date.getDay()) {
+                sameDay = true;
+                break;
+            }
+        }
+        if (sameDay == false) {
+            while (getDateVal(dates[0]) != date.getDay()) {
+                date.setDate(date.getDate() + 1);
+            }
+        }
+        var pre = date.getFullYear().toString() + ((date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1).toString() : (date.getMonth() + 1).toString());
+        pre += ((date.getDate() + 1) < 10 ? "0" + date.getDate().toString() : date.getDate().toString());
+
+        var post = originalDate.getHours() < 10 ? ("0" + originalDate.getHours().toString()) : (originalDate.getHours().toString());
+        if(originalDate.getMinutes() == 0)
+            post += "0000";
+        else {
+            post += originalDate.getMinutes() < 10 ? ("0" + originalDate.getMinutes().toString()) : (originalDate.getMinutes().toString() + "00");
+        }
+        return pre + "T" + post;
+    }
+
+    function correctEndTime(courseStart, courseTime, courseDays) {
+        var re = /\B(AM|PM)/gm;
+        var subst = ' $1';
+
+        var fullDate = courseStart + ' ' + courseTime;
+        var originalDate = new Date(fullDate.replace(re, subst));
+        var date = new Date(courseStart);
+        var sameDay = false;
+        var dates = getArrayOfDates(courseDays);
+        for (var i = 0; i < dates.length; ++i) {
+            if (getDateVal(dates[i]) == date.getDay()) {
+                sameDay = true;
+                break;
+            }
+        }
+        if (sameDay == false) {
+            while (getDateVal(dates[0]) != date.getDay()) {
+                date.setDate(date.getDate() + 1);
+            }
+        }
+        var pre = date.getFullYear().toString() + ((date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1).toString() : (date.getMonth() + 1).toString());
+        pre += ((date.getDate() + 1) < 10 ? "0" + date.getDate().toString() : date.getDate().toString());
+
+        var post = originalDate.getHours() < 10 ? ("0" + originalDate.getHours().toString()) : (originalDate.getHours().toString());
+        if(originalDate.getMinutes() == 0)
+            post += "0000";
+        else {
+            post += originalDate.getMinutes() < 10 ? ("0" + originalDate.getMinutes().toString()) : (originalDate.getMinutes().toString() + "00");
+        }
+        return pre + "T" + post;
+    }
+
+    function getDays(string) {
+        return string.substr(string.indexOf(" ") + 1);
+    }
+
+    function getCourseType(string) {
+        return string.substr(0, string.indexOf(" "));
+    }
+
+    function getExamStartDate(string) {
+        string = string.split(" ");
+        string = string[string.length - 1];
+        string = string.replace('(', '').replace(')', '');
+        return string;
+    }
+
+    /**
+     * Parses user pasted content finding the courses within it
+     */
+    function parsePasteContent(content) {
+        //Get courses in array.
+        var courses = getMatches(content, /(\w{3,4}(\*\d+){2}[\s\S]*?\D\d{1,2}\/\d{1,2}\/\d{1,2})+/gm, 1);
+        var term = getTerm(content);
+        var ical = 'BEGIN:VCALENDAR\n';
+        ical += 'VERSION:2.0\n';
+        ical += 'PRODID:-//Justin Visser/jhvisser.com//iCal Export v1.0//EN\n';
+
+        for (var i = 0; i < courses.length; i++) {
+            var splitCourse = courses[i].split("\n");
+            var startDate = getStartDate(splitCourse);
+            var courseCode = splitCourse[0];
+            for (var j = 2; j < (splitCourse.length-2); j = j + 3) {
+                //Start at index 2 as that is when classes section starts.
+                //Subtract 2 from length as the last two entries are the credit total and start date.
+                //j+3 as each class info is in lines of 3.
+
+                ical += 'BEGIN:VEVENT\n';
+                if(getCourseType(splitCourse[j]) == "EXAM") {
+                    ical += 'DTSTART:' + correctStartTime(getExamStartDate(splitCourse[j + 1]), getCourseTime(splitCourse[j + 1], 'start', getCourseType(splitCourse[j])), getDays(splitCourse[j])) + '\n';
+                    ical += 'DTEND:' + correctEndTime(getExamStartDate(splitCourse[j + 1]), getCourseTime(splitCourse[j + 1], 'end', getCourseType(splitCourse[j])), getDays(splitCourse[j])) + '\n';
+                } else {
+                    ical += 'DTSTART:' + correctStartTime(startDate, getCourseTime(splitCourse[j + 1], 'start', getCourseType(splitCourse[j])), getDays(splitCourse[j])) + '\n';
+                    ical += 'DTEND:' + correctEndTime(startDate, getCourseTime(splitCourse[j + 1], 'end', getCourseType(splitCourse[j])), getDays(splitCourse[j])) + '\n';
+                }
+                if(getCourseType(splitCourse[j]) != "EXAM")
+                    ical += 'RRULE:FREQ=WEEKLY;UNTIL='+ term.termEnd +';WKST=SU;BYDAY=' + convertArrayOfDatesToICSFormat(getArrayOfDates(getDays(splitCourse[j]))) + '\n';
+                ical += 'SUMMARY:' + '(' + getCourseType(splitCourse[j]) + ') '  + courseCode + '\n';
+                ical += 'LOCATION:' + getCourseLocation(splitCourse[j+2]) + ', University of Guelph\n';
+                ical += 'DESCRIPTION:' + courseCode + '\n';
+                ical += 'END:VEVENT\n';
+            }
+        }
+        ical += 'END:VCALENDAR';
+        console.log(ical);
+    }
+
+    /**
+     * ------------------------------------------------
+     * Event bindings
+     * ------------------------------------------------
+     */
+
+    //Called when getIcal button is pressed.
+    $("#getIcal").click(function(e) {
+        e.preventDefault();
+        parsePasteContent($("#coursePasteContent").val());
+    });
+
+</script>
 </html>
