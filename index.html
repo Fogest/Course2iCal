@@ -282,7 +282,7 @@
      */
     function parsePasteContent(content) {
         //Get courses in array.
-        var courses = getMatches(content, /(\w{3,4}(\*\d+){2}[\s\S]*?\D\d{1,2}\/\d{1,2}\/\d{1,2})+/gm, 1);
+        var courses = getMatches(content, /(\w{3,4}(\*(\d+|DE)){2}[\s\S]*?\D\d{1,2}\/\d{1,2}\/\d{1,2})+/gm, 1);
         var term = getTerm(content);
         var ical = 'BEGIN:VCALENDAR\n';
         ical += 'VERSION:2.0\n';
@@ -296,7 +296,8 @@
                 //Start at index 2 as that is when classes section starts.
                 //Subtract 2 from length as the last two entries are the credit total and start date.
                 //j+3 as each class info is in lines of 3.
-
+                if(getCourseType(splitCourse[j]) == 'Distance')
+                    continue;
                 ical += 'BEGIN:VEVENT\n';
                 if(getCourseType(splitCourse[j]) == "EXAM") {
                     ical += 'DTSTART:' + correctStartTime(getExamStartDate(splitCourse[j + 1]), getCourseTime(splitCourse[j + 1], 'start', getCourseType(splitCourse[j])), getDays(splitCourse[j])) + '\n';
