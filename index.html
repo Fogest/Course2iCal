@@ -176,9 +176,11 @@
     function getCourseLocation(string) {
         var location = string.split(",")[0];
         var room = string.split(",")[1];
-        if(typeof room === 'undefined')
-            return getFullBuildingName(location) + " (" + location + ")";
-        return getFullBuildingName(location) + " (" + location + ")" + "," + room;
+        if(typeof room === 'undefined'){
+            return getFullBuildingName(location) + " (" + location + ")";}
+        else{
+        return getFullBuildingName(location) + " (" + location + ")" + room; //removed the comma as this caused formating issues when converting to iCal 
+    }
     }
 
     //Course functions
