@@ -178,9 +178,7 @@
         var room = string.split(",")[1];
         if(typeof room === 'undefined'){
             return getFullBuildingName(location) + " (" + location + ")";}
-        else{
-        return getFullBuildingName(location) + " (" + location + ")" + room; //removed the comma as this caused formating issues when converting to iCal 
-    }
+        return getFullBuildingName(location) + " (" + location + ")" + '\,' + room;
     }
 
     //Course functions
