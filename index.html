@@ -176,9 +176,9 @@
     function getCourseLocation(string) {
         var location = string.split(",")[0];
         var room = string.split(",")[1];
-        if(typeof room === 'undefined')
-            return getFullBuildingName(location) + " (" + location + ")";
-        return getFullBuildingName(location) + " (" + location + ")" + "," + room;
+        if(typeof room === 'undefined'){
+            return getFullBuildingName(location) + " (" + location + ")";}
+        return getFullBuildingName(location) + " (" + location + ")" + '\,' + room;
     }
 
     //Course functions
