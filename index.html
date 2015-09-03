@@ -58,6 +58,8 @@
 <script src="js/jquery-1.11.3.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/minishare-0.0.1.js"></script>
+<script src="js/Blob.js"></script>
+<script src="js/FileSaver.min.js"></script>
 <script  type="text/javascript">
 
     /**
@@ -320,8 +322,7 @@
         var download = new Blob([ical], {
             type: 'text/calendar'
         });
-        var url = URL.createObjectURL(download);
-        $("#downloadIcal").data('url', url);
+        $("#downloadIcal").data('download', download);
     }
 
     /**
@@ -363,7 +364,7 @@
 
     $("#downloadIcal").click(function(e) {
         e.preventDefault();
-        window.location.replace($(this).data('url'));
+        saveAs($(this).data('download'), "Course Calendar.ics");
     });
 
 </script>
