@@ -16,22 +16,27 @@
     <title>Course 2 Calendar</title>
 </head>
 <body>
-<div class="container">
-    <h1>Course 2 Calendar for UofG</h1>
-    <p>Simply copy your whole web advisor course display page and then paste it into the box below. To do this go to
+
+<div class="inner-body container">
+    <h1 class="banner">Course 2 Calendar for UofG</h1>
+    <p>Copy your whole web advisor course display page and then paste it into the box below. To do this go to
     your WebAdvisor schedule page (not the Class Schedule Grid) and hit CTRL+A and then CTRL+C. This will copy your whole
     page and copy it. Now paste it into the box below.</p>
-    <p>Still stuck? Click the button below to open a small video.</p>
-    <button class="btn btn-info btn-sm" id="showVideo">Show Video</button>
+
     <div style="display:none" class="hiddenVideo">
         <video id="howtoVideo" width="1056" height="596" controls loop>
             <source src="video/howto.mp4" type="video/mp4">
             Your browser does not support the video tag.
         </video>
     </div>
-    <br>
-    <hr>
-    <textarea name="coursePasteContent" id="coursePasteContent" cols="50" rows="10"></textarea></br>
+    
+    <div class="pasteArea">
+        <textarea name="coursePasteContent" id="coursePasteContent" cols="50" rows="10"></textarea></br>
+        <div class="stuck-box">
+            <p>Hey! Having problems? Click the button below to get some help!</p>
+            <button class="btn btn-info btn-sm" id="showVideo">Show Video</button>
+        </div>
+    </div>
     <button id="getIcal" class="btn btn-primary getIcalButton">Generate Calendar</button>
 
     <div style="display:none" class="resultContent">
@@ -57,7 +62,6 @@
 </body>
 <script src="js/jquery-1.11.3.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
-<script src="js/minishare-0.0.1.js"></script>
 <script src="js/Blob.js"></script>
 <script src="js/FileSaver.min.js"></script>
 <script  type="text/javascript">
@@ -355,11 +359,6 @@
 
         //Reveal content:
         $(".resultContent").slideDown(300);
-        $.miniShare( {
-            message: "Care to Share?",
-            twitter_message: "Check out \"Course 2 Calendar\" it allows you to easily export your course schedule.",
-            url: "https://jhvisser.com/course/"
-        });
     });
 
     $("#downloadIcal").click(function(e) {

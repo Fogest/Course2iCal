@@ -1,5 +1,42 @@
+@import url(https://fonts.googleapis.com/css?family=Bree+Serif);
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
+body { 
+	background-image: url("../img/background.png");
+	font-family: 'Open Sans', sans-serif;
+}
+
+h1,h2,h3,h4,h5,h6 {
+	font-family: 'Bree Serif', serif;
+}
+.inner-body {
+	background-color: white;
+    border-radius: 5px;
+    margin-top: 10px;
+    padding-bottom: 10px;
+}
+
 .container {
-    text-align: center;
+	text-align: center;
     margin-left: auto;
     margin-right: auto;
+}
+
+
+div.pasteArea { 
+	position: relative;
+}
+
+div.stuck-box {
+	position: absolute;
+    top: 0;
+    margin-top: 20px;
+    margin-right: 15px;
+    border-radius: 2px;
+    padding: 5px 5px 5px 5px;
+    right: 0;
+    width: 19%;
+    padding-bottom: 2px;
+    background: aliceblue;
+}
 }
