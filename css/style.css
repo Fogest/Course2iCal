@@ -9,6 +9,13 @@ body {
 h1,h2,h3,h4,h5,h6 {
 	font-family: 'Bree Serif', serif;
 }
+
+h1.banner img {
+    height: 50px;
+    width: 50px;
+    margin-right: 10px;
+}
+
 .inner-body {
 	background-color: white;
     border-radius: 5px;
