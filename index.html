@@ -89,11 +89,11 @@
     }
 
     function getTermData() {
-        return $.parseJSON('{"W15": {"termEnd": "20150403T000000"},"F14":{"termEnd": "20141129T000000"},"S15":{"termEnd": "20150801T000000"},"F15":{"termEnd": "20151205T000000"}}');
+        return $.parseJSON('{"W15": {"termEnd": "20150403T000000"},"F14":{"termEnd": "20141129T000000"},"S15":{"termEnd": "20150801T000000"},"F15":{"termEnd": "20151205T000000"}, "W16":{"termEnd": "20160409T000000"}}');
     }
 
     function getTerm(content) {
-        var term = /^.+\s2015$/gm.exec(content);
+        var term = /^.+\s201\d$/gm.exec(content);
         term = term[0];
         term = term.split(" ");
         term = term[0].charAt(0).toUpperCase() + term[1].charAt(2) + term[1].charAt(3);
