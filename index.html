@@ -296,6 +296,10 @@
     function parsePasteContent(content) {
         //Get courses in array.
         var courses = getMatches(content, /(\w{3,4}(\*(\d+|DE)){2}[\s\S]*?\D\d{1,2}\/\d{1,2}\/\d{1,2})+/gm, 1);
+        if(!content) {
+            alert("There was an error. Did you enter data?");
+            return false;
+        }
         var term = getTerm(content);
         var ical = 'BEGIN:VCALENDAR\n';
         ical += 'VERSION:2.0\n';
@@ -332,6 +336,7 @@
             type: 'text/calendar'
         });
         $("#downloadIcal").data('download', download);
+        return true;
     }
 
     /**
@@ -360,10 +365,11 @@
     $("#getIcal").click(function(e) {
         e.preventDefault();
         $(".resultContent").slideUp(300);
-        parsePasteContent($("#coursePasteContent").val());
+        var status = parsePasteContent($("#coursePasteContent").val());
 
         //Reveal content:
-        $(".resultContent").slideDown(300);
+        if(status)
+            $(".resultContent").slideDown(300);
     });
 
     $("#downloadIcal").click(function(e) {
