@@ -55,11 +55,16 @@
         <hr>
         Having problems? <a href="mailto:course@jhvisser.com">Send me an email</a><br>
         Made by <a href="https://jhvisser.com">Justin Visser</a><br>
-        Project code is on <a href="https://github.com/Fogest/Course2iCal">GitHub</a>
+        Project code is on <a href="https://github.com/Fogest/Course2iCal">GitHub</a><br>
+        Thank you to <a href="https://trackjs.com">TrackJS</a> for sponsoring our error reporting!
     </footer>
 </div>
 
 </body>
+<!-- BEGIN TRACKJS - Not for tracking user. For tracking javascript errors thst may occur! -->
+<script type="text/javascript">window._trackJs = { token: 'e5f9f43c4b644dbfbe86f40909746e5d' };</script>
+<script type="text/javascript" src="https://d2zah9y47r7bi2.cloudfront.net/releases/current/tracker.js"></script>
+<!-- END TRACKJS -->
 <script src="js/jquery-1.11.3.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/Blob.js"></script>
@@ -293,6 +298,10 @@
     function parsePasteContent(content) {
         //Get courses in array.
         var courses = getMatches(content, /(\w{3,4}(\*(\d+|DE)){2}[\s\S]*?\D\d{1,2}\/\d{1,2}\/\d{1,2})+/gm, 1);
+        if(!content) {
+            alert("There was an error. Did you enter data?");
+            return false;
+        }
         var term = getTerm(content);
         var ical = 'BEGIN:VCALENDAR\n';
         ical += 'VERSION:2.0\n';
@@ -329,6 +338,7 @@
             type: 'text/calendar'
         });
         $("#downloadIcal").data('download', download);
+        return true;
     }
 
     /**
@@ -357,10 +367,11 @@
     $("#getIcal").click(function(e) {
         e.preventDefault();
         $(".resultContent").slideUp(300);
-        parsePasteContent($("#coursePasteContent").val());
+        var status = parsePasteContent($("#coursePasteContent").val());
 
         //Reveal content:
-        $(".resultContent").slideDown(300);
+        if(status)
+            $(".resultContent").slideDown(300);
     });
 
     $("#downloadIcal").click(function(e) {
