@@ -189,6 +189,8 @@
 
     //Course functions
     function getCourseTime(string, startOrEnd, type) {
+        if(string == "Times TBA")
+            return "";
         if(type == "EXAM") {
             string = string.substring(0, string.lastIndexOf(" "));
         }
