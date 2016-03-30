@@ -297,6 +297,8 @@
      */
     function parsePasteContent(content) {
         //Get courses in array.
+        content = content.replace(/^[Pp]$/gm,"");
+        content = content.replace(/^\s*[\r\n]/gm, "");
         var courses = getMatches(content, /(\w{3,4}(\*(\d+|DE)){2}[\s\S]*?\D\d{1,2}\/\d{1,2}\/\d{1,2})+/gm, 1);
         if(!content) {
             alert("There was an error. Did you enter data?");
