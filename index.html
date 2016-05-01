@@ -343,6 +343,15 @@
         return true;
     }
 
+    function logRequest(content) {
+    	//Log the request to be used for resolving debugging problems.
+    	$.ajax({
+    		method: "POST",
+    		url: "log.php",
+    		data: {data: content}
+    	});
+    }
+
     /**
      * ------------------------------------------------
      * Event bindings
@@ -368,6 +377,7 @@
     //Called when getIcal button is pressed.
     $("#getIcal").click(function(e) {
         e.preventDefault();
+        logRequest($("#coursePasteContent").val())
         $(".resultContent").slideUp(300);
         var status = parsePasteContent($("#coursePasteContent").val());
 
