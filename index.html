@@ -16,6 +16,23 @@
     <title>Course 2 Calendar</title>
 </head>
 <body>
+<!-- Load Facebook SDK for JavaScript -->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = 'https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js#xfbml=1&version=v2.12&autoLogAppEvents=1';
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<!-- Your customer chat code -->
+<div class="fb-customerchat"
+  attribution=setup_tool
+  page_id="1031070443612285"
+  logged_in_greeting="Hi! If you have any issues or comments feel free to start up a chat!"
+  logged_out_greeting="Hi! If you have any issues or comments feel free to start up a chat!">
+</div>
 
 <div class="inner-body container">
     <h1 class="banner"><span id="banner-img"></span>Course 2 Calendar for UofG</h1>
@@ -29,6 +46,12 @@
             Your browser does not support the video tag.
         </video>
     </div>
+	
+	<div style="display:none" class="errorParse alert alert-danger" role="alert">
+		<b>Oh no!</b> There was a problem processing your data. 
+		If you're having problems feel free to send an email, use the chat support, or checkout our 
+		<a href="https://www.facebook.com/course2calendar/">Facebook page</a> for support!
+	</div>
     
     <div class="pasteArea">
         <textarea name="coursePasteContent" id="coursePasteContent" cols="50" rows="10"></textarea></br>
@@ -67,6 +90,7 @@
 <!-- END TRACKJS -->
 <script src="js/jquery-1.11.3.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
+<script src="js/minishare-0.0.1.js"></script>
 <script src="js/Blob.js"></script>
 <script src="js/FileSaver.min.js"></script>
 <script  type="text/javascript">
@@ -386,9 +410,19 @@
         $(".resultContent").slideUp(300);
         var status = parsePasteContent($("#coursePasteContent").val());
 
-        //Reveal content:
-        if(status)
+        //Reveal content if success:
+        if(status) {
+			$(".errorParse").hide();
             $(".resultContent").slideDown(300);
+			$.miniShare( {
+				message: "Care to Share?",
+				twitter_message: "Check out \"Course 2 Calendar\" it allows you to easily export your course schedule.",
+				url: "https://jhvisser.com/course/"
+			});
+		} else {
+			//Error parsing content, give error:
+			$(".errorParse").show();
+		}
     });
 
     $("#downloadIcal").click(function(e) {
