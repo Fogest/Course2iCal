@@ -204,7 +204,7 @@
                     results.push('SU');
                     break;
                 default:
-                    results.push('Days of the week incorrect');
+                    results.push('INVALID');
             }
         }
         return results.join();
@@ -357,8 +357,13 @@
                     ical += 'DTSTART:' + correctStartTime(startDate, getCourseTime(splitCourse[j + 1], 'start', getCourseType(splitCourse[j])), getDays(splitCourse[j])) + '\n';
                     ical += 'DTEND:' + correctEndTime(startDate, getCourseTime(splitCourse[j + 1], 'end', getCourseType(splitCourse[j])), getDays(splitCourse[j])) + '\n';
                 }
-                if(getCourseType(splitCourse[j]) != "EXAM")
-                    ical += 'RRULE:FREQ=WEEKLY;UNTIL='+ term.termEnd +';WKST=SU;BYDAY=' + convertArrayOfDatesToICSFormat(getArrayOfDates(getDays(splitCourse[j]))) + '\n';
+                if(getCourseType(splitCourse[j]) != "EXAM") {
+                    ical += 'RRULE:FREQ=WEEKLY;UNTIL='+ term.termEnd +';WKST=SU';
+                    icsDates = convertArrayOfDatesToICSFormat(getArrayOfDates(getDays(splitCourse[j])))
+                    if (!icsDates.includes("INVALID"))
+                        ical += ';BYDAY=' + icsDates;
+                    ical += '\n'
+                }
                 ical += 'SUMMARY:' + '(' + getCourseType(splitCourse[j]) + ') '  + courseCode + '\n';
                 ical += 'LOCATION:' + getCourseLocation(splitCourse[j+2]) + ', University of Guelph\n';
                 ical += 'DESCRIPTION:' + courseCode + '\n';
