@@ -402,7 +402,7 @@
     }
 
     function addWarningMessage(msg) {
-        $("#parseWarn .warnMessages").append('<li class="warnMessage list-group-item-warning list-group-item">' + msg + '</li>');
+        $("#parseWarn .warnMessages").append($('<li class="warnMessage list-group-item-warning list-group-item"></li>').text(msg));
     }
 
     function clearWarningMessages() {
