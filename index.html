@@ -46,6 +46,13 @@
             Your browser does not support the video tag.
         </video>
     </div>
+
+    <div style="display:none" id="parseWarn" class="alert alert-warning" role="alert">
+        <ul style="margin-bottom:10px" class="warnMessages list-group list-group-flush">
+        </ul>
+        If you're having problems feel free to send an email, use the chat support, or checkout our
+        <a href="https://www.facebook.com/course2calendar/">Facebook page</a> for support!
+    </div>
 	
 	<div style="display:none" class="errorParse alert alert-danger" role="alert">
 		<b>Oh no!</b> There was a problem processing your data. 
@@ -359,9 +366,16 @@
                 }
                 if(getCourseType(splitCourse[j]) != "EXAM") {
                     ical += 'RRULE:FREQ=WEEKLY;UNTIL='+ term.termEnd +';WKST=SU';
-                    icsDates = convertArrayOfDatesToICSFormat(getArrayOfDates(getDays(splitCourse[j])))
+                    var dates = getArrayOfDates(getDays(splitCourse[j]));
+                    var icsDates = convertArrayOfDatesToICSFormat(dates);
                     if (!icsDates.includes("INVALID"))
                         ical += ';BYDAY=' + icsDates;
+                    else {
+                        var invalidDay = dates.includes('DaysTBA') ? '"Days TBA" set as the day it occurs' : 'an invalid day';
+                        var warnMsg = 'Your course "' + courseCode + '" has ' + invalidDay + '. This entry may show up on your calendar in an undesired manner, and will require manual adjustment.';
+                        addWarningMessage(warnMsg);
+                        $("#parseWarn").show();
+                    }
                     ical += '\n'
                 }
                 ical += 'SUMMARY:' + '(' + getCourseType(splitCourse[j]) + ') '  + courseCode + '\n';
@@ -385,6 +399,14 @@
     		url: "log.php",
     		data: {data: content}
     	});
+    }
+
+    function addWarningMessage(msg) {
+        $("#parseWarn .warnMessages").append('<li class="warnMessage list-group-item-warning list-group-item">' + msg + '</li>');
+    }
+
+    function clearWarningMessages() {
+        $("#parseWarn .warnMessages").empty();
     }
 
     /**
@@ -414,6 +436,8 @@
         e.preventDefault();
         logRequest($("#coursePasteContent").val())
         $(".resultContent").slideUp(300);
+        clearWarningMessages();
+        $("#parseWarn").hide();
         var status = parsePasteContent($("#coursePasteContent").val());
 
         //Reveal content if success:
