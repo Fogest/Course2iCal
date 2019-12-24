@@ -135,7 +135,7 @@
     }
 
     function getTerm(content) {
-        var term = /^.+\s201\d$/gm.exec(content);
+        var term = /^(Summer|Fall|Winter)\s\d{4}$/gm.exec(content);
         term = term[0];
         term = term.split(" ");
         term = term[0].charAt(0).toUpperCase() + term[1].charAt(2) + term[1].charAt(3);
