@@ -439,11 +439,16 @@
         $(".resultContent").slideUp(300);
         clearWarningMessages();
         $("#parseWarn").hide();
-        var status = parsePasteContent($("#coursePasteContent").val());
+	let status;
+	try {
+	    status = parsePasteContent($("#coursePasteContent").val());
+	} catch(err) {
+	    status = false;	
+	}
 
         //Reveal content if success:
         if(status) {
-			$(".errorParse").hide();
+	    $(".errorParse").hide();
             $(".resultContent").slideDown(300);
 			$.miniShare( {
 				message: "Care to Share?",
